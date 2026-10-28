@@ -17,4 +17,5 @@ data "aws_ami" "ubuntu" {
   }
 
   owners = ["099720109477"]
+  ami = "ami-0fd9576cca965bd19"
 }
