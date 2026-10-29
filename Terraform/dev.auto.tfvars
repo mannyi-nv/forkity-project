@@ -5,6 +5,6 @@ pub-subnet-count      = 4
 pub-cidr-block        = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20", "10.0.64.0/20"]
 pub-availability-zone = ["eu-north-1a", "eu-north-1b", "eu-north-1c", "eu-north-1a"]
 ec2-instance-count    = 4
-ec2_instance_type     = ["t3a.medium", "t3a.medium", "t3a.medium", "t3a.medium"]
+ec2_instance_type     = ["t3.xlarge", "t3a.medium", "t3a.medium", "t3a.medium"]
 ec2_volume_size       = 50
 ec2_volume_type       = "gp3"
