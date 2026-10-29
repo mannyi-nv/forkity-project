@@ -1,9 +1,9 @@
-aws-region            = "eu-north-1a"
+aws-region            = "us-east-1"
 env                   = "dev"
 cidr-block            = "10.0.0.0/16"
 pub-subnet-count      = 4
 pub-cidr-block        = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20", "10.0.64.0/20"]
-pub-availability-zone = ["eu-north-1a", "eu-north-1b", "eu-north-1c", "eu-north-1a"]
+pub-availability-zone = ["us-east-1a", "us-east-1b", "us-east-1c", "us-east-1d"]
 ec2-instance-count    = 4
 ec2_instance_type     = ["t3.xlarge", "t3a.medium", "t3a.medium", "t3a.medium"]
 ec2_volume_size       = 50
