@@ -16,7 +16,8 @@ resource "aws_instance" "ec2" {
   vpc_security_group_ids = [aws_security_group.default-ec2-sg.id]
   user_data = local.instance_names[count.index] == "jenkins-server" ? join("\n", [
     file("${path.module}/scripts/jenkins-install.sh"),
-    file("${path.module}/scripts/docker-install.sh")
+    file("${path.module}/scripts/docker-install.sh"),
+    file("${path.module}/scripts/post-install.sh")
   ]) : null
 
   root_block_device {
