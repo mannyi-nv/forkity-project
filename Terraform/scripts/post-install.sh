@@ -2,15 +2,15 @@
 set -euo pipefail
 
 # start sonarqube container image
-sudo docker run -d --name sonarqube -p 9000:9000 sonarqube:community
+docker run -d --name sonarqube -p 9000:9000 sonarqube:community
 
 # Install trivy
 
-sudo apt-get install wget gnupg
+apt-get install wget gnupg
 wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
 echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-sudo apt-get update
-sudo apt-get install trivy
+apt-get update
+apt-get install trivy
 trivy --version
 
 
