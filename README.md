@@ -53,7 +53,9 @@ This project simulates a real enterprise-grade setup where a **React-based Netfl
     ├── vpc.tf               # Network setup
     ├── variables.tf         # Input variables
     ├── dev.auto.tfvars      # Environment variables
-    └── gather.tf            # Data sources and dependencies
+    ├── gather.tf            # Data sources and dependencies
+    └── scripts
+        └── jenkins-install.sh # Installs and starts Jenkins on Ubuntu
 ```
 
 ## 🛠️ Tech Stack
