@@ -1,5 +1,5 @@
 locals {
-  org     = "aman"
+  org     = "itay"
   project = "forkity"
   env     = var.env
 }

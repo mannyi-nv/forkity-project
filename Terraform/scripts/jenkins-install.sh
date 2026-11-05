@@ -19,7 +19,7 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y ca-certificates curl fontconfig openjdk-21-jre
+apt-get install -y ca-certificates curl fontconfig openjdk-21-jre openssl
 
 install -d -m 0755 /etc/apt/keyrings
 key_tmp="$(mktemp)"
@@ -79,6 +79,48 @@ runuser -u jenkins -- env JENKINS_HOME=/var/lib/jenkins \
   --plugin-download-directory /var/lib/jenkins/plugins \
   --plugins "${plugins[@]}"
 
+admin_password_file=/var/lib/jenkins/secrets/bootstrap-admin-password
+admin_configured_marker=/var/lib/jenkins/secrets/bootstrap-admin-configured
+if [[ ! -f "$admin_configured_marker" ]]; then
+  install -d -o jenkins -g jenkins -m 0700 /var/lib/jenkins/secrets
+  install -d -o jenkins -g jenkins -m 0755 /var/lib/jenkins/init.groovy.d
+
+  if [[ ! -f "$admin_password_file" ]]; then
+    (
+      umask 077
+      openssl rand -hex 32 > "$admin_password_file"
+    )
+  fi
+  chown jenkins:jenkins "$admin_password_file"
+  chmod 0600 "$admin_password_file"
+
+  cat > /var/lib/jenkins/init.groovy.d/10-bootstrap-admin.groovy <<'EOF'
+import hudson.security.GlobalMatrixAuthorizationStrategy
+import hudson.security.HudsonPrivateSecurityRealm
+import jenkins.model.Jenkins
+
+def jenkins = Jenkins.get()
+def passwordFile = new File('/var/lib/jenkins/secrets/bootstrap-admin-password')
+if (!passwordFile.isFile()) {
+    throw new IllegalStateException('Jenkins bootstrap admin password file is missing')
+}
+
+def realm = new HudsonPrivateSecurityRealm(false)
+realm.createAccount('jenkins', passwordFile.text.trim())
+jenkins.setSecurityRealm(realm)
+
+def authorization = new GlobalMatrixAuthorizationStrategy()
+authorization.add(Jenkins.ADMINISTER, 'jenkins')
+jenkins.setAuthorizationStrategy(authorization)
+jenkins.save()
+
+new File('/var/lib/jenkins/secrets/bootstrap-admin-configured').text = 'configured\n'
+new File('/var/lib/jenkins/init.groovy.d/10-bootstrap-admin.groovy').delete()
+EOF
+  chown jenkins:jenkins /var/lib/jenkins/init.groovy.d/10-bootstrap-admin.groovy
+  chmod 0644 /var/lib/jenkins/init.groovy.d/10-bootstrap-admin.groovy
+fi
+
 systemctl start jenkins
 
 if ! systemctl is-active --quiet jenkins; then
@@ -86,4 +128,20 @@ if ! systemctl is-active --quiet jenkins; then
   exit 1
 fi
 
+for attempt in {1..120}; do
+  [[ -f "$admin_configured_marker" ]] && break
+  if ! systemctl is-active --quiet jenkins; then
+    echo "Jenkins stopped before the bootstrap admin user was configured." >&2
+    exit 1
+  fi
+  sleep 5
+done
+
+if [[ ! -f "$admin_configured_marker" ]]; then
+  echo "Jenkins started, but the bootstrap admin user was not configured." >&2
+  exit 1
+fi
+
 echo "Jenkins is installed and running."
+echo "Bootstrap admin username: jenkins"
+echo "Retrieve its password with: sudo cat /var/lib/jenkins/secrets/bootstrap-admin-password"

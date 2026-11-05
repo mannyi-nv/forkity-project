@@ -58,7 +58,7 @@ This project simulates a real enterprise-grade setup where a **React-based Netfl
         └── jenkins-install.sh # Installs Jenkins and requested plugins; skips setup wizard
 ```
 
-The Jenkins installer skips the setup wizard but does not create an administrator or configure authentication. Configure Jenkins security and restrict access before exposing the controller.
+The Jenkins installer skips the setup wizard, creates the `jenkins` administrator with a generated password, and installs the requested plugins. Retrieve the password on the server with `sudo cat /var/lib/jenkins/secrets/bootstrap-admin-password`. Restrict access to Jenkins and change the generated password after signing in.
 
 ## 🛠️ Tech Stack
 
