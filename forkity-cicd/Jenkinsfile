@@ -1,5 +1,7 @@
 pipeline {
-    agent ubuntu
+    agent {
+        label 'ubuntu'
+    }
     options {
         skipDefaultCheckout(true)
         timestamps()
