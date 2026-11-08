@@ -71,6 +71,7 @@ plugins=(
   maven-plugin
   sonar
   slack
+  nodejs
 )
 
 runuser -u jenkins -- env JENKINS_HOME=/var/lib/jenkins \
