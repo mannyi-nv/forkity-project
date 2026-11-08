@@ -19,6 +19,14 @@ pipeline {
                 cleanWs()
             }
         }
+        stage('Verify Node') {
+            steps {
+                // This prints the Jenkins Node Name and the system hostname
+                echo "Successfully running on Jenkins Node: ${env.NODE_NAME}"
+                sh 'echo "System Hostname: $(hostname)"'
+                sh 'echo "Internal IP: $(hostname -I)"'
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm
