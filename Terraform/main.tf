@@ -2,7 +2,7 @@ locals {
   instance_names = [
     "jenkins-server",
     "jenkins-node",
-    "monitoring-server"
+    "monitoring-server",
     "kubernetes-master-node",
     "kubernetes-worker-node"
   ]
